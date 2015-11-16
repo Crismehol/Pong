@@ -10,9 +10,11 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -28,7 +30,19 @@ public class Pong extends Application {
     final int WORLD_WIDTH = 500;
     final int WORLD_HEIGHT = 400;
     
-    @Override
+    double direccionX = 2;
+    
+    double direcBolaY = 2;
+    double direcJug1Y = 2;
+    double direcJug2Y = 2;
+    final double TAM_PALAS = 30;
+    
+    double ladoAlto = 0;
+    double ladoBajo = 400; 
+    double ladoDcho = 500;
+    double ladoIzq = 0;
+    
+
     public void start(Stage primaryStage) {
         
         // Create scene
@@ -38,34 +52,112 @@ public class Pong extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         
-        // import javafx.scene.shape.Rectangle
-        Circle bola = new Circle (200, 10, 5);
+        // Creación de bola y palas
+        Circle bola = new Circle(5);
+        bola.setTranslateX(100);
+        bola.setTranslateY(100);
         bola.setFill(Color.WHITE);
         root.getChildren().add(bola);
+               
+        Rectangle jugador1 = new Rectangle (5, 30);
+        jugador1.setTranslateX(10);
+        jugador1.setTranslateY(20);
+        jugador1.setFill(Color.WHITE);
+        root.getChildren().add(jugador1);
         
-        
-//        Rectangle jugador1 = new Rectangle (50, 10, 10, 40);
-//        jugador1.setFill(Color.WHITE);
-//        root.getChildren().add(jugador1);
-//        
-//        Rectangle jugador2 = new Rectangle (450, 10, 10, 40);
-//        jugador2.setFill(Color.WHITE);
-//        root.getChildren().add(jugador2);
+        Rectangle jugador2 = new Rectangle (5, 30);
+        jugador2.setTranslateX(490);
+        jugador2.setTranslateY(20);
+        jugador2.setFill(Color.WHITE);
+        root.getChildren().add(jugador2);
     
-        
-     new AnimationTimer() {
+       
+    new AnimationTimer() {
             @Override
-            public void handle(long now) {
-                double posX = bola.getTranslateX();
-                posX--;
-                bola.setTranslateX(posX);
+        public void handle(long now) {
+            double posBX = bola.getTranslateX();
+            posBX += direccionX;
+            bola.setTranslateX(posBX);
                 
+            double posBY = bola.getTranslateY();
+            posBY += direcBolaY;
+            bola.setTranslateY(posBY);
                 
-            }   
-     }.start(); 
-        
-    }
+            //JUGADOR 1                
+            double jug1Y = jugador1.getTranslateY();
+            jug1Y += direcJug1Y;
+            jugador1.setTranslateY(jug1Y);
+                
+            //JUGADOR 2                
+            double jug2Y = jugador2.getTranslateY();
+            jug2Y += direcJug2Y;
+            jugador2.setTranslateY(jug2Y);
+              
+            // BOLA
+            if(posBX == jugador2.getTranslateX()){
+                direccionX = -2;
+                if(posBY >= jug2Y && posBY <= jug2Y + TAM_PALAS){
+                   direcJug2Y = -2;                                      
+                }else{ 
+                     direccionX = 2;
+                }
+            }
+            if(posBX == jugador1.getTranslateX()){
+                direccionX = 2;                     
+                if(posBY >= jug1Y && posBY <= jug1Y + TAM_PALAS){
+                   direcJug1Y = 2;                                      
+                }else{ 
+                     direccionX = -2;
+                }
+            }
+          
+            if (posBY == ladoBajo){
+                direcBolaY = -2;
+            } 
+            if (posBY == ladoAlto){
+                direcBolaY = 2;
+            }     
+              
+            // JUGADORES       
+            if(jug1Y == ladoBajo){
+                direcJug1Y = -2;
+            }
+            if (jug1Y == ladoAlto){
+                direcJug1Y = 2;
+            }                 
+            if(jug2Y == ladoBajo){
+                direcJug2Y = -2;
+            }
+            if (jug2Y == ladoAlto){
+                direcJug2Y = 2;
+            }
 
+            
+        }
+            
+    }.start(); 
+     
+    scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        public void handle(KeyEvent event) {
+            switch (event.getCode()) {
+                case S:
+                    direcJug1Y = -2;
+                    break;
+                case X:
+                    direcJug1Y = 2;
+                    break;
+                    
+                case UP:
+                    direcJug2Y = -2;
+                    break;
+                case DOWN:
+                    direcJug2Y = 2;
+                    break;
+            }      
+        }
+    });
+
+    }
     /**
      * @param args the command line arguments
      */
@@ -74,3 +166,12 @@ public class Pong extends Application {
     }
     
 }
+// si posXbola = posXpala
+//      si posYbola >= posYpala "y además"
+//         posYbola<= pozYpala+tamYpala
+//              ((TOCANDO LA PALA))
+//      si no((NO TOCANDO LA BOLA))
+//
+// PARA LOS MARCADORES
+// Label o text
+// score1 = new label()
