@@ -37,9 +37,14 @@ public class Pong extends Application {
     final double RADIO_B = 2.5;
            
     double ladoAlto = 50;
-    double ladoBajo = 400; 
+    double ladoBajo = 350; 
     double ladoDcho = 500;
     double ladoIzq = 0;
+    
+    
+    double jug1Y = 0;
+    double jug2Y = 0;
+
     int marcador_1 = 0;
     int marcador_2 = 0;
 
@@ -51,6 +56,7 @@ public class Pong extends Application {
         primaryStage.setTitle("Basic Invaders FX");
         primaryStage.setScene(scene);
         primaryStage.show();
+       
         
         // PELOTA
         Circle bola = new Circle(5);
@@ -72,7 +78,8 @@ public class Pong extends Application {
         jugador2.setFill(Color.WHITE);
         root.getChildren().add(jugador2);
     
-//         MARCADORES
+        
+        // MARCADORES
         Label score1 = new Label(String.valueOf(marcador_1));
         score1.setTranslateX(125);
         score1.setTranslateY(20);
@@ -98,12 +105,12 @@ public class Pong extends Application {
             bola.setTranslateY(posBY);
                 
             //JUGADOR 1                
-            double jug1Y = jugador1.getTranslateY();
+            jug1Y = jugador1.getTranslateY();
             jug1Y += direcJug1Y;
             jugador1.setTranslateY(jug1Y);
                 
             //JUGADOR 2                
-            double jug2Y = jugador2.getTranslateY();
+            jug2Y = jugador2.getTranslateY();
             jug2Y += direcJug2Y;
             jugador2.setTranslateY(jug2Y);
               
@@ -113,7 +120,12 @@ public class Pong extends Application {
                 if(posBY >= jug2Y && posBY <= jug2Y + TAM_PALAS){
                     direcJug2Y = -2;                                      
                 }else{ 
-                    direccionX = 2;
+                    bola.setTranslateX(WORLD_WIDTH / 2);
+                    bola.setTranslateY(WORLD_HEIGHT / 2);
+                    direccionX = 0;
+                    direcBolaY= 0;
+                    direcJug1Y = 0;
+                    direcJug2Y = 0;
                 }
             }
             if(posBX == jugador1.getTranslateX()){
@@ -121,7 +133,12 @@ public class Pong extends Application {
                 if(posBY >= jug1Y && posBY <= jug1Y + TAM_PALAS){
                    direcJug1Y = 2;                                      
                 }else{ 
-                   direccionX = -2;
+                    bola.setTranslateX(WORLD_WIDTH / 2);
+                    bola.setTranslateY(WORLD_HEIGHT / 2);
+                    direccionX = 0;
+                    direcBolaY= 0;
+                    direcJug1Y = 0;
+                    direcJug2Y = 0;
                 }          
             }
           
@@ -149,8 +166,7 @@ public class Pong extends Application {
             // MARCADORES
             if(posBX == ladoIzq){
                 marcador_2 ++;
-                score2.setText(Integer.toString(marcador_2));
-                
+                score2.setText(Integer.toString(marcador_2));                
             }
             if(posBX == ladoDcho){
                 marcador_1 ++;
@@ -164,17 +180,35 @@ public class Pong extends Application {
         public void handle(KeyEvent event) {
             switch (event.getCode()) {
                 case S:
-                    direcJug1Y = -2;
+                    if(jug1Y == ladoAlto){
+                       direcJug1Y = 0;
+                    }else{
+                        direcJug1Y = -2;
+                    }
                     break;
-                case X:
-                    direcJug1Y = 2;
+                    
+                case X:                   
+                    if(jug1Y == ladoBajo){
+                       direcJug1Y = 0;                        
+                    }else{ 
+                       direcJug1Y = 2;
+                    }
                     break;
                     
                 case UP:
-                    direcJug2Y = -2;
+                    if(jug2Y == ladoAlto){
+                       direcJug2Y = 0;
+                    }else{
+                        direcJug2Y = -2;
+                    }                    
                     break;
+                    
                 case DOWN:
-                    direcJug2Y = 2;
+                     if(jug2Y == ladoBajo){
+                       direcJug2Y = 0;                        
+                    }else{ 
+                       direcJug2Y = 2;
+                    }
                     break;
                 
                 case SPACE:
